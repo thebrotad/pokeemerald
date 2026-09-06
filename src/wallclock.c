@@ -733,7 +733,7 @@ void CB2_ViewWallClock(void)
     u8 angle2;
 
     LoadWallClockGraphics();
-    LZ77UnCompVram(gWallClockView_Tilemap, (u16 *)BG_SCREEN_ADDR(7));
+    LZ77UnCompVram(gWallClockStart_Tilemap, (u16 *)BG_SCREEN_ADDR(7));
 
     taskId = CreateTask(Task_ViewClock_WaitFadeIn, 0);
     InitClockWithRtc(taskId);
@@ -768,7 +768,7 @@ void CB2_ViewWallClock(void)
 
     WallClockInit();
 
-    AddTextPrinterParameterized(WIN_BUTTON_LABEL, FONT_NORMAL, gText_Cancel4, 0, 1, 0, NULL);
+    AddTextPrinterParameterized(WIN_BUTTON_LABEL, FONT_NORMAL, gText_Confirm3, 0, 1, 0, NULL);
     PutWindowTilemap(WIN_BUTTON_LABEL);
     ScheduleBgCopyTilemapToVram(2);
 }
@@ -800,9 +800,9 @@ static void Task_SetClock_HandleInput(u8 taskId)
     {
         gTasks[taskId].tMinuteHandAngle = gTasks[taskId].tMinutes * 6;
         gTasks[taskId].tHourHandAngle = (gTasks[taskId].tHours % 12) * 30 + (gTasks[taskId].tMinutes / 10) * 5;
-        if (JOY_NEW(A_BUTTON))
+        if (JOY_NEW(A_BUTTON) || JOY_NEW(B_BUTTON))
         {
-            gTasks[taskId].func = Task_SetClock_AskConfirm;
+            gTasks[taskId].func = Task_SetClock_Confirmed;
         }
         else
         {
@@ -877,7 +877,7 @@ static void Task_SetClock_Exit(u8 taskId)
 static void Task_ViewClock_WaitFadeIn(u8 taskId)
 {
     if (!gPaletteFade.active)
-        gTasks[taskId].func = Task_ViewClock_HandleInput;
+        gTasks[taskId].func = Task_SetClock_HandleInput;
 }
 
 static void Task_ViewClock_HandleInput(u8 taskId)

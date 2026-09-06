@@ -19,6 +19,7 @@
 
 extern struct Time gLocalTime;
 
+void RtcAdvanceTime(s32 hours, s32 minutes, s32 seconds);
 void RtcDisableInterrupts(void);
 void RtcRestoreInterrupts(void);
 u32 ConvertBcdToBinary(u8 bcd);

@@ -344,3 +344,13 @@ u32 RtcGetLocalDayCount(void)
 {
     return RtcGetDayCount(&sRtc);
 }
+
+void RtcAdvanceTime(s32 hours, s32 minutes, s32 seconds)
+{
+    gLocalTime.hours += hours;
+    gLocalTime.minutes += minutes;
+    gLocalTime.seconds += seconds;
+    RtcGetInfo(&sRtc);
+    RtcCalcTimeDifference(&sRtc, &gSaveBlock2Ptr->localTimeOffset, &gLocalTime);
+    RtcCalcLocalTime();
+}

@@ -1,5 +1,8 @@
 #include "global.h"
 #include "play_time.h"
+#include "rtc.h"
+#include "main.h"
+#include "overworld.h"
 
 enum
 {
@@ -45,6 +48,9 @@ void PlayTimeCounter_Update(void)
 
     gSaveBlock2Ptr->playTimeVBlanks = 0;
     gSaveBlock2Ptr->playTimeSeconds++;
+
+    if (!gMain.inBattle && (gMain.callback2 == CB2_Overworld || gMain.callback2 == CB2_OverworldBasic))
+    	RtcAdvanceTime(0, 1, 0);
 
     if (gSaveBlock2Ptr->playTimeSeconds < 60)
         return;

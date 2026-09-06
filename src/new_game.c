@@ -204,6 +204,7 @@ void NewGameInitData(void)
     WipeTrainerNameRecords();
     ResetTrainerHillResults();
     ResetContestLinkResults();
+    RtcInitLocalTimeOffset(8, 0);
 }
 
 static void ResetMiniGamesRecords(void)
