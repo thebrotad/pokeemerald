@@ -468,3 +468,25 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
         scriptSize = sizeof(gSaveBlock1Ptr->ramScript.data.script);
     InitRamScript(script, scriptSize, MAP_GROUP(MAP_UNDEFINED), MAP_NUM(MAP_UNDEFINED), NO_OBJECT);
 }
+
+#include "rtc.h"
+void SetTimeBasedEncounters(void)
+{
+	RtcCalcLocalTime();
+	if (gLocalTime.hours >= 6 && gLocalTime.hours <= 8)
+	{
+		VarSet(VAR_TIME_BASED_ENCOUNTER, 1); // Morning
+	}
+	else if (gLocalTime.hours >= 9 && gLocalTime.hours <= 17)
+	{
+		VarSet(VAR_TIME_BASED_ENCOUNTER, 2); // Day
+	}
+	else if (gLocalTime.hours >= 18 && gLocalTime.hours <= 20)
+	{
+		VarSet(VAR_TIME_BASED_ENCOUNTER, 3); // Evening
+	}
+	else
+	{
+		VarSet(VAR_TIME_BASED_ENCOUNTER, 4); // Night
+	}
+}    

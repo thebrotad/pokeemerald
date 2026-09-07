@@ -1,4 +1,6 @@
 Route101_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, SetTimeEncounters
+	map_script MAP_SCRIPT_ON_RESUME, SetTimeEncounters
 	map_script MAP_SCRIPT_ON_TRANSITION, Route101_OnTransition
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, Route101_OnFrame
 	.byte 0
@@ -290,3 +292,6 @@ Route101_Text_RouteSign:
 	.string "ROUTE 101\n"
 	.string "{UP_ARROW} OLDALE TOWN$"
 
+SetTimeEncounters::
+	callnative SetTimeBasedEncounters
+	return
