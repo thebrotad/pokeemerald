@@ -26,8 +26,6 @@
 
 #define SKIP_OBJECT_EVENT_LOAD  1
 
-#define WINDOW_CLOCK 0x1F
-
 struct InitialPlayerAvatarState
 {
     u8 transitionFlags;
