@@ -46,9 +46,6 @@
 #include "constants/battle_frontier.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
-#include "rtc.h" // Ensure RTC header is included at the top
-
-#define WIN_START_MENU_TIME 5
 
 // Menu actions
 enum
@@ -235,18 +232,6 @@ static const struct WindowTemplate sSaveInfoWindowTemplate = {
     .paletteNum = 15,
     .baseBlock = 8
 };
-
-static const struct WindowTemplate [WIN_START_MENU_TIME] = {
-    .bg = 0,
-    .tilemapLeft = 2,  // X position on screen
-    .tilemapTop = 15,  // Y position on screen
-    .width = 7,        // Width of the box
-    .height = 2,       // Height of the box
-    .paletteNum = 15,
-    .baseBlock = 0x01D0 // Ensure this block offset doesn't overlap existing windows
-};
-
-ShowStartMenuTimeWindow();
 
 // Local functions
 static void BuildStartMenuActions(void);
@@ -603,27 +588,6 @@ void ShowStartMenu(void)
     }
     CreateStartMenuTask(Task_ShowStartMenu);
     LockPlayerFieldControls();
-}
-
-void ShowStartMenuTimeWindow(void)
-{
-    u8 text[12];
-    
-    // Format the time string (HH:MM)
-    // gLocalTime contains the current in-game RTC data
-    ConvertIntToDecimalStringN(text, gLocalTime.hours, STR_CONV_MODE_LEADING_ZEROS, 2);
-    text[2] = CHAR_COLON;
-    ConvertIntToDecimalStringN(text + 3, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-    text[5] = EOS;
-
-    // Create, clear, and draw the window frame
-    AddStartMenuWindow(&sStartMenuWindowTemplates[WIN_START_MENU_TIME]);
-    DrawDialogueFrame(WIN_START_MENU_TIME, FALSE);
-    
-    // Print the formatted time text
-    AddTextPrinterToWindow(WIN_START_MENU_TIME, FONT_NORMAL, text, 4, 2, TEXT_SKIP_DRAW, NULL);
-    PutWindowTilemap(WIN_START_MENU_TIME);
-    CopyWindowToVram(WIN_START_MENU_TIME, COPYWIN_GFX);
 }
 
 static bool8 HandleStartMenuInput(void)
@@ -1274,8 +1238,6 @@ static bool32 InitSaveWindowAfterLinkBattle(u8 *state)
     return FALSE;
 }
 
-
-
 void CB2_SetUpSaveAfterLinkBattle(void)
 {
     if (InitSaveWindowAfterLinkBattle(&gMain.state))
@@ -1462,9 +1424,6 @@ static void HideStartMenuWindow(void)
     RemoveStartMenuWindow();
     ScriptUnfreezeObjectEvents();
     UnlockPlayerFieldControls();
-    ClearStdWindowAndFrameToTransparent(WIN_START_MENU_TIME, FALSE);
-    RemoveStartMenuWindow(WIN_START_MENU_TIME);
-
 }
 
 void HideStartMenu(void)
