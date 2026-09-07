@@ -42,6 +42,7 @@
 #include "random.h"
 #include "roamer.h"
 #include "rotating_gate.h"
+#include "rtc.h"
 #include "safari_zone.h"
 #include "save.h"
 #include "save_location.h"
@@ -201,6 +202,19 @@ EWRAM_DATA static u16 sAmbientCrySpecies = 0;
 EWRAM_DATA static bool8 sIsAmbientCryWaterMon = FALSE;
 EWRAM_DATA struct LinkPlayerObjectEvent gLinkPlayerObjectEvents[4] = {0};
 
+static const struct WindowTemplate sClockWindowTemplate =
+{
+    .bg = 0,
+    .tilemapLeft = 24,  // X position on screen
+    .tilemapTop = 1,    // Y position on screen
+    .width = 5,         // Width of the box
+    .height = 2,        // Height of the box
+    .paletteNum = 15,
+    .baseBlock = 0x01C // Ensure this block range doesn't overlap other HUDs
+};
+
+static u8 sClockWindowId = WINDOW_NONE;
+
 static const struct WarpData sDummyWarpData =
 {
     .mapGroup = MAP_GROUP(MAP_UNDEFINED),
@@ -356,6 +370,7 @@ static void (*const sMovementStatusHandler[])(struct LinkPlayerObjectEvent *, st
 };
 
 // code
+
 void DoWhiteOut(void)
 {
     RunScriptImmediately(EventScript_WhiteOut);
