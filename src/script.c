@@ -473,15 +473,15 @@ void InitRamScript_NoObjectEvent(u8 *script, u16 scriptSize)
 void SetTimeBasedEncounters(void)
 {
 	RtcCalcLocalTime();
-	if (gLocalTime.hours >= 6 && gLocalTime.hours <= 8)
+	if (gLocalTime.hours >= 5 && gLocalTime.hours <= 8)
 	{
 		VarSet(VAR_TIME_BASED_ENCOUNTER, 1); // Morning
 	}
-	else if (gLocalTime.hours >= 9 && gLocalTime.hours <= 16)
+	else if (gLocalTime.hours >= 9 && gLocalTime.hours <= 17)
 	{
 		VarSet(VAR_TIME_BASED_ENCOUNTER, 2); // Day
 	}
-	else if (gLocalTime.hours >= 17 && gLocalTime.hours <= 20)
+	else if (gLocalTime.hours >= 18 && gLocalTime.hours <= 21)
 	{
 		VarSet(VAR_TIME_BASED_ENCOUNTER, 3); // Evening
 	}
