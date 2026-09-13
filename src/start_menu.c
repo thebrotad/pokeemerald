@@ -337,7 +337,26 @@ static void BuildNormalStartMenu(void)
     AddStartMenuAction(MENU_ACTION_SAVE);
     AddStartMenuAction(MENU_ACTION_OPTION);
     AddStartMenuAction(MENU_ACTION_EXIT);
-    AddStartMenuAction(MENU_ACTION_CLOCK);
+
+    if (gLocalTime.hours > 0)
+    {
+        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+        ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+        
+        AddStartMenuAction(MENU_ACTION_CLOCK);
+    }
+    else
+    {
+        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEADING_ZEROS, 2);
+        ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+        
+        AddStartMenuAction(MENU_ACTION_CLOCK);
+    }
+
+    // // // BELOW IS THE SIMPLE FUNCTION, DOES NOT SET 12am TO DOUBLE ZEROS // // //
+    //ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+    //ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+    //AddStartMenuAction(MENU_ACTION_CLOCK);
 }
 
 static void BuildSafariZoneStartMenu(void)
