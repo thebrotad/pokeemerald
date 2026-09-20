@@ -140,6 +140,11 @@ static void Task_SaveAfterLinkBattle(u8 taskId);
 static void Task_WaitForBattleTowerLinkSave(u8 taskId);
 static bool8 FieldCB_ReturnToFieldStartMenu(void);
 
+static const u8 sMorningText[] = _("MORNING\n{STR_VAR_1} : {STR_VAR_2}");
+static const u8 sDaytimeText[] = _("DAYTIME\n{STR_VAR_1} : {STR_VAR_2}");
+static const u8 sEveningText[] = _("EVENING\n{STR_VAR_1} : {STR_VAR_2}");
+static const u8 sNighttimeText[] = _("NIGHTTIME\n{STR_VAR_1} : {STR_VAR_2}");
+
 static const struct WindowTemplate sWindowTemplate_SafariBalls = {
     .bg = 0,
     .tilemapLeft = 1,
@@ -152,9 +157,9 @@ static const struct WindowTemplate sWindowTemplate_SafariBalls = {
 
 static const struct WindowTemplate sWindowTemplate_Clock = {
     .bg = 0,
-    .tilemapLeft = 8,
+    .tilemapLeft = 10,
     .tilemapTop = 1,
-    .width = 9,
+    .width = 10,
     .height = 4,
     .paletteNum = 15,
     .baseBlock = 0x8
@@ -457,21 +462,68 @@ static void ShowClockWindow(void)
     PutWindowTilemap(sClockWindowId);
     DrawStdWindowFrame(sClockWindowId, FALSE);
 
-    if (gLocalTime.hours > 0)
+    if (gLocalTime.hours < 1)
     {
-        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEADING_ZEROS, 2);
         ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-        StringExpandPlaceholders(gStringVar4, gText_MenuClock);
+        StringExpandPlaceholders(gStringVar4, sNighttimeText);
         AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
         CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
     }
     else
     {
-        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEADING_ZEROS, 2);
-        ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
-        StringExpandPlaceholders(gStringVar4, gText_MenuClock);
-        AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
-        CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+        if (gLocalTime.hours > 0 && gLocalTime.hours <5)
+        {
+            ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+            ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+            StringExpandPlaceholders(gStringVar4, sNighttimeText);
+            AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
+            CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+        }
+        else
+        {
+            if (gLocalTime.hours > 4 && gLocalTime.hours <8)
+            {
+                ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+                ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+                StringExpandPlaceholders(gStringVar4, sMorningText);
+                AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
+                CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+            }
+            else
+            {
+                if (gLocalTime.hours > 7 && gLocalTime.hours <17)
+                {
+                    ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+                    ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+                    StringExpandPlaceholders(gStringVar4, sDaytimeText);
+                    AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
+                    CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+                }
+                else
+                {
+                    if (gLocalTime.hours > 16 && gLocalTime.hours <20)
+                    {
+                        ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+                        ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+                        StringExpandPlaceholders(gStringVar4, sEveningText);
+                        AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
+                        CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+                    }
+                    else
+                    {
+                        if(gLocalTime.hours > 19)
+                        {
+                            ConvertIntToDecimalStringN(gStringVar1, gLocalTime.hours, STR_CONV_MODE_LEFT_ALIGN, 2);
+                            ConvertIntToDecimalStringN(gStringVar2, gLocalTime.minutes, STR_CONV_MODE_LEADING_ZEROS, 2);
+                            StringExpandPlaceholders(gStringVar4, sNighttimeText);
+                            AddTextPrinterParameterized(sClockWindowId, FONT_NORMAL, gStringVar4, 0, 1, TEXT_SKIP_DRAW, NULL);
+                            CopyWindowToVram(sClockWindowId, COPYWIN_GFX);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -784,6 +836,8 @@ static bool8 StartMenuPlayerNameCallback(void)
 
 static bool8 StartMenuSaveCallback(void)
 {
+    RemoveExtraStartMenuWindows();
+
     if (CurrentBattlePyramidLocation() != PYRAMID_LOCATION_NONE)
         RemoveExtraStartMenuWindows();
 
